@@ -1,7 +1,7 @@
-# 🌀 Solana PDA Creation Example
+# Solana PDA Creation Example
 
 This project demonstrates how to create a **Program Derived Address (PDA)** using a custom Solana Rust program and a TypeScript client.  
-It runs fully on your **local Solana validator** — no mainnet connection required.
+It runs fully on your **local Solana validator/Devnet/Mainnet**.
 
 ---
 
@@ -125,19 +125,6 @@ PDA balance: 1000000000
 ✅ PDA created successfully!
 ```
 
----
-
-## 🧠 Troubleshooting
-
-| Issue                                                                 | Fix                                                                               |
-| --------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| ❌ `Program failed: Cross-program invocation with unauthorized signer` | Ensure PDA seeds match between Rust (`lib.rs`) and TypeScript (`index.test.ts`).  |
-| ❌ `Transaction not confirmed`                                         | Make sure your local validator is running.                                        |
-| ❌ `Program not found`                                                 | Check that the `.so` path and `PROGRAM_ID` are correct.                           |
-| ⚠️ `Balance is 0`                                                     | Verify your program allocates lamports with `system_instruction::create_account`. |
-
----
-
 ## 🧩 PDA Logic Summary
 
 Your Rust program (`lib.rs`) performs these steps:
@@ -162,7 +149,7 @@ Your Rust program (`lib.rs`) performs these steps:
    invoke_signed(&instruction, _accounts, &[signer_seeds])?;
    ```
 
-Your client test then validates that the PDA is successfully created and funded.
+the client test then validates that the PDA is successfully created and funded.
 
 ---
 ````
