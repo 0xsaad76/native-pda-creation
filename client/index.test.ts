@@ -1,0 +1,71 @@
+import { test, expect, beforeAll, describe } from "bun:test";
+import { LiteSVM } from "litesvm";
+import {
+  Connection,
+  PublicKey,
+  Keypair,
+  SystemProgram,
+  Transaction,
+  TransactionInstruction,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
+
+const connection = new Connection("http://127.0.0.1:8899", "confirmed");
+
+describe("Create pda from client", async () => {
+  let liteSvm: LiteSVM;
+  let pda: PublicKey;
+  let bump: number;
+  let programId: PublicKey;
+  let payer: Keypair;
+
+  beforeAll(() => {
+    liteSvm = new LiteSVM();
+    programId = new PublicKey("6hUgtGJYbccik7HbtKRDiyaq4tdFrjdcquxGgA1hQShf");
+    payer = Keypair.generate();
+    liteSvm.addProgramFromFile(programId, "./contract.so");
+    liteSvm.airdrop(payer.publicKey, BigInt(100000000000));
+    [pda, bump] = PublicKey.findProgramAddressSync(
+      [payer.publicKey.toBuffer(), Buffer.from("user")],
+      programId
+    );
+
+    let ix = new TransactionInstruction({
+      keys: [
+        {
+          pubkey: payer.publicKey,
+          isSigner: true,
+          isWritable: true,
+        },
+        {
+          pubkey: pda,
+          isSigner: false,
+          isWritable: true,
+        },
+        {
+          pubkey: SystemProgram.programId,
+          isSigner: false,
+          isWritable: false,
+        },
+      ],
+      programId,
+      data: Buffer.from(""),
+    });
+
+    const tx = new Transaction().add(ix);
+    tx.feePayer = payer.publicKey;
+    tx.recentBlockhash = liteSvm.latestBlockhash();
+    tx.sign(payer);
+
+    let res = liteSvm.sendTransaction(tx);
+    console.log("transaction result : ", res.toString());
+  });
+
+  test("should create a pda ", () => {
+    const balance = liteSvm.getBalance(pda);
+    console.log("balance : ", balance);
+    expect(Number(balance)).toBeGreaterThan(0);
+    expect(Number(balance)).toBe(1000000000);
+    console.log("PDA Created Succesfully !");
+  });
+});
