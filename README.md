@@ -32,8 +32,6 @@ Make sure you have the following installed:
   sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
   ```
 
-````
-
 * 🧠 **Bun** (for running TypeScript tests) →
 
   ```bash
@@ -152,4 +150,3 @@ Your Rust program (`lib.rs`) performs these steps:
 the client test then validates that the PDA is successfully created and funded.
 
 ---
-````
